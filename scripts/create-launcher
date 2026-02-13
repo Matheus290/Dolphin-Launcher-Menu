@@ -1,0 +1,258 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ----------------------------
+# Helpers
+# ----------------------------
+
+log() { printf '%s\n' "$*" >&2; }
+
+is_desktop_file() {
+  [[ "${1,,}" == *.desktop ]]
+}
+
+# Converte caminho local -> file:///... com encoding (ex: %20)
+path_to_file_url() {
+  local p="$1"
+
+  # Normalizando para absoluto
+  if [[ "$p" != /* ]]; then
+    p="$(realpath "$p" 2>/dev/null || printf '%s' "$p")"
+  fi
+
+  local out=""
+  if command -v python3 >/dev/null 2>&1; then
+    out="$(python3 - "$p" <<'PY' 2>/dev/null || true
+import sys, pathlib, urllib.parse
+p = pathlib.Path(sys.argv[1]).as_posix()
+print("file://" + urllib.parse.quote(p))
+PY
+)"
+  fi
+
+  # Fallback se python falhar ou não existir
+  if [[ -z "$out" ]]; then
+    # Só troca espaço por %20 (não é full-URL-encode)
+    out="file://${p// /%20}"
+  fi
+
+  printf '%s' "$out"
+}
+
+get_desktop_dir() {
+  local f="$HOME/.config/user-dirs.dirs"
+  local d=""
+
+  if [[ -f "$f" ]]; then
+    d="$(grep -E '^XDG_DESKTOP_DIR=' "$f" | head -n1 | cut -d= -f2- | tr -d '"')"
+    # Expande $HOME
+    d="${d/\$HOME/$HOME}"
+  fi
+
+  [[ -n "$d" ]] || d="$HOME/Desktop"
+  printf '%s' "$d"
+}
+
+# Escape string para campo do .desktop (evita \ e novas linhas)
+desktop_field_escape() {
+  # Remove CR/LF; evita backslash
+  printf '%s' "$1" | tr -d '\r\n' | sed 's/\\/\\\\/g'
+}
+
+# Recebe um caminho e retorna basename seguro (sem extensão, sem chars esquisitos)
+safe_basename() {
+  local path="$1"
+  local base
+  base="$(basename "$path")"
+  base="${base%.*}"
+
+  # Troca caracteres problemáticos por underscore
+  # Mantém letras, números, espaço, ponto, traço e underscore
+  base="$(printf '%s' "$base" | sed 's/[^[:alnum:] ._-]/_/g')"
+
+  # Colapsa múltiplos espaços/underscores
+  base="$(printf '%s' "$base" | sed 's/[[:space:]]\+/ /g; s/_\+/_/g')"
+
+  # Trim
+  base="$(printf '%s' "$base" | sed 's/^ *//; s/ *$//')"
+
+  # Fallback
+  [[ -n "$base" ]] || base="Launcher"
+  printf '%s' "$base"
+}
+
+detect_icon() {
+  local p="$1"
+
+  # 1) Tenta gio
+  local icon
+  icon="$(gio info -a standard::icon "$p" 2>/dev/null \
+    | sed -n 's/.*standard::icon: //p' \
+    | tr -d '\r' \
+    | awk '{print $1}')"
+  [[ -n "$icon" ]] && { printf '%s' "$icon"; return; }
+
+  # 2) Fallback: mime -> mime-name
+  local mime
+  mime="$(xdg-mime query filetype "$p" 2>/dev/null || true)"
+  [[ -n "$mime" ]] && { printf '%s' "${mime//\//-}"; return; }
+
+  # 3) Genérico
+  printf '%s' "application-x-desktop"
+}
+
+detect_icon_name() {
+  local p="$1"
+
+  # 1) Tenta pegar ícone “real” via gio
+  local icon
+  icon="$(gio info -a standard::icon "$p" 2>/dev/null \
+    | sed -n 's/.*standard::icon: //p' \
+    | tr -d '\r' \
+    | awk '{print $1}')"
+  if [[ -n "$icon" ]]; then
+    printf '%s' "$icon"
+    return
+  fi
+
+  # 2) Fallback: mime -> heurística
+  local mime
+  mime="$(xdg-mime query filetype "$p" 2>/dev/null || true)"
+  if [[ -n "$mime" ]]; then
+    # Alguns temas usam isso, alguns não; mas é melhor que nada
+    printf '%s' "${mime//\//-}"
+    return
+  fi
+
+  printf '%s' "application-x-desktop"
+}
+
+unique_path() {
+  local dir="$1"
+  local filename="$2"   # Ex: "MyApp.desktop"
+  local candidate="$dir/$filename"
+
+  if [[ ! -e "$candidate" ]]; then
+    printf '%s' "$candidate"
+    return 0
+  fi
+
+  local name="${filename%.desktop}"
+  local i=2
+  while true; do
+    candidate="$dir/$name ($i).desktop"
+    [[ ! -e "$candidate" ]] && { printf '%s' "$candidate"; return 0; }
+    i=$((i+1))
+  done
+}
+
+is_executable_file() {
+  local p="$1"
+  [[ -f "$p" && -x "$p" ]]
+}
+
+write_desktop() {
+  local out_path="$1"
+  local name="$2"
+  local exec_line="$3"
+  local icon="${4:-application-x-executable}"
+  local terminal="${5:-false}"
+  local categories="${6:-Utility;}"
+  local comment="${7:-}"
+
+  cat > "$out_path" <<EOF
+  [Desktop Entry]
+  Type=Application
+  Version=1.0
+  Name=$(desktop_field_escape "$name")
+  Comment=$(desktop_field_escape "$comment")
+  Exec=$exec_line
+  Icon=$(desktop_field_escape "$icon")
+  Terminal=$terminal
+  Categories=$(desktop_field_escape "$categories")
+EOF
+
+  chmod +x "$out_path"
+}
+
+# ----------------------------
+# Args
+# ----------------------------
+
+target="here"
+if [[ $# -ge 1 && "$1" == --target=* ]]; then
+  target="${1#--target=}"
+  shift
+fi
+
+if [[ $# -lt 1 ]]; then
+  log "Usage: create-launcher.sh --target=here|desktop <files...>"
+  exit 2
+fi
+
+# Define destino
+dest_dir=""
+case "$target" in
+  here)
+    # "here": para cada arquivo, cria o .desktop na pasta onde o arquivo está
+    ;;
+  desktop)
+    # Desktop do usuário
+    dest_dir="$(get_desktop_dir)"
+    mkdir -p "$dest_dir"
+    ;;
+  *)
+    log "Invalid target: $target"
+    exit 2
+    ;;
+esac
+
+# ----------------------------
+# Main
+# ----------------------------
+
+# Percorre todos os argumentos (seleções)
+for input in "$@"; do
+  # Dolphin normalmente passa caminhos já absolutos; mas se vier relativo, normaliza:
+  if [[ "$input" != /* ]]; then
+    input="$(realpath "$input" 2>/dev/null || printf '%s' "$input")"
+  fi
+
+  # Ignora entradas .desktop para evitar encadeamento
+  if is_desktop_file "$input"; then
+    log "Skipping .desktop input: $input"
+    continue
+  fi
+
+  local_dest="$dest_dir"
+  if [[ -z "$local_dest" ]]; then
+    local_dest="$(dirname "$input")"
+  fi
+
+  # Nome base
+  base="$(safe_basename "$input")"
+  out="$(unique_path "$local_dest" "$base.desktop")"
+
+  # 1) Define Exec
+  if is_executable_file "$input"; then
+      exec_line="$(desktop_field_escape "$input")"
+      comment="Launcher for executable"
+  else
+      url="$(path_to_file_url "$input")"
+      exec_line="xdg-open $url"
+      comment="Launcher for file/folder"
+  fi
+
+  # 2) Define Ícone
+  if [[ -d "$input" ]]; then
+      icon="folder"
+  elif is_executable_file "$input"; then
+      icon="application-x-executable"
+  else
+      icon="$(detect_icon_name "$input")"
+  fi
+
+  write_desktop "$out" "$(desktop_field_escape "$base")" "$exec_line" "$icon" "false" "Utility;" "$(desktop_field_escape "$comment")"
+
+  log "Created: $out"
+done

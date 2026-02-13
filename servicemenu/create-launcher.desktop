@@ -1,0 +1,45 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/allfiles;inode/directory;
+Actions=CreateLauncherHere;CreateLauncherOnDesktop;
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=Launchers
+X-KDE-Submenu[pt_BR]=Atalhos
+X-KDE-Submenu[es]=Lanzadores
+X-KDE-Submenu[de]=Starter
+X-KDE-Submenu[it]=Launcher
+X-KDE-Submenu[fr]=Lanceurs
+X-KDE-Submenu[ru]=Ярлыки
+X-KDE-Submenu[hi]=लॉन्चर
+X-KDE-Submenu[ja]=ランチャー
+X-KDE-Submenu[zh_CN]=启动器
+Icon=application-x-desktop
+
+[Desktop Action CreateLauncherHere]
+Name=Create Launcher Here
+Name[pt_BR]=Criar atalho aqui
+Name[es]=Crear lanzador aquí
+Name[de]=Starter hier erstellen
+Name[it]=Crea launcher qui
+Name[fr]=Créer un lanceur ici
+Name[ru]=Создать ярлык здесь
+Name[hi]=यहाँ लॉन्चर बनाएँ
+Name[ja]=ここにランチャーを作成
+Name[zh_CN]=在此创建启动器
+Icon=application-x-desktop
+Exec=create-launcher --target=here %F
+
+[Desktop Action CreateLauncherOnDesktop]
+Name=Create Launcher on Desktop
+Name[pt_BR]=Criar atalho na área de trabalho
+Name[es]=Crear lanzador en el escritorio
+Name[de]=Starter auf dem Desktop erstellen
+Name[it]=Crea launcher sul desktop
+Name[fr]=Créer un lanceur sur le bureau
+Name[ru]=Создать ярлык на рабочем столе
+Name[hi]=डेस्कटॉप पर लॉन्चर बनाएँ
+Name[ja]=デスクトップにランチャーを作成
+Name[zh_CN]=在桌面创建启动器
+Icon=user-desktop
+Exec=create-launcher --target=desktop %F

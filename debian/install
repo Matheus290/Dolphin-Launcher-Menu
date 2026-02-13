@@ -1,0 +1,3 @@
+scripts/create-launcher usr/bin/
+servicemenu/create-launcher.desktop usr/share/kio/servicemenus/
+servicemenu/create-launcher.desktop usr/share/kservices5/ServiceMenus/

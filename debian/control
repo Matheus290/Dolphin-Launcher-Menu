@@ -1,0 +1,17 @@
+Source: dolphin-launcher-menu
+Section: utils
+Priority: optional
+Maintainer: Matheus C. Salvalagio <matheus-290@hotmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://github.com/Matheus290/Dolphin-Launcher-Menu
+
+Package: dolphin-launcher-menu
+Architecture: all
+Depends: ${misc:Depends}, xdg-utils
+Description: Dolphin Launcher Menu
+ Dolphin service menu that allows creating .desktop launchers
+ from selected files or folders.
+ .
+ Works with KDE Plasma (Dolphin).
