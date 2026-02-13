@@ -1,8 +1,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![KDE](https://img.shields.io/badge/KDE-Plasma%205%20%7C%206-blue) ![Release](https://img.shields.io/github/v/release/Matheus290/Dolphin-Launcher-Menu) ![Stars](https://img.shields.io/github/stars/Matheus290/Dolphin-Launcher-Menu)
 
-# Dolphin Create Launcher
+# Dolphin Launcher Menu
 
-Create `.desktop` launchers directly from Dolphin's context menu.
+It's a Dolphin plugin that creates `.desktop` launchers directly from context menu.
 
 This service menu adds:
 
@@ -19,7 +19,7 @@ It automatically:
 - Applies correct permissions
 - Uses appropriate file icons
 
-Compatible with **KDE Plasma 5 and 6**.
+Compatible with **KDE Plasma 5** and **KDE Plasma 6**.
 
 ---
 
@@ -42,7 +42,7 @@ Compatible with **KDE Plasma 5 and 6**.
 Download the latest `.deb` from Releases and install:
 
 ```bash
-sudo dpkg -i dolphin-create-launcher_*.deb
+sudo dpkg -i dolphin-launcher-menu_*.deb
 ```
 
 ### Option 2 - Manual install (user only)
