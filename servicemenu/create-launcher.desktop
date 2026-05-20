@@ -2,7 +2,7 @@
 Type=Service
 X-KDE-ServiceTypes=KonqPopupMenu/Plugin
 MimeType=all/allfiles;inode/directory;
-Actions=CreateLauncherHere;CreateLauncherOnDesktop;
+Actions=01CreateLauncherHere;02CreateLauncherOnDesktop;03CreateLauncherInAppLauncher;
 X-KDE-Priority=TopLevel
 X-KDE-Submenu=Launchers
 X-KDE-Submenu[pt_BR]=Atalhos
@@ -16,7 +16,7 @@ X-KDE-Submenu[ja]=ランチャー
 X-KDE-Submenu[zh_CN]=启动器
 Icon=application-x-desktop
 
-[Desktop Action CreateLauncherHere]
+[Desktop Action 01CreateLauncherHere]
 Name=Create Launcher Here
 Name[pt_BR]=Criar atalho aqui
 Name[es]=Crear lanzador aquí
@@ -30,7 +30,7 @@ Name[zh_CN]=在此创建启动器
 Icon=application-x-desktop
 Exec=create-launcher --target=here %F
 
-[Desktop Action CreateLauncherOnDesktop]
+[Desktop Action 02CreateLauncherOnDesktop]
 Name=Create Launcher on Desktop
 Name[pt_BR]=Criar atalho na área de trabalho
 Name[es]=Crear lanzador en el escritorio
@@ -43,3 +43,17 @@ Name[ja]=デスクトップにランチャーを作成
 Name[zh_CN]=在桌面创建启动器
 Icon=user-desktop
 Exec=create-launcher --target=desktop %F
+
+[Desktop Action 03CreateLauncherInAppLauncher]
+Name=Add Launcher to App Launcher
+Name[pt_BR]=Adicionar atalho ao menu de aplicativos
+Name[es]=Añadir lanzador al menú de aplicaciones
+Name[de]=Starter zum Anwendungsmenü hinzufügen
+Name[it]=Aggiungi launcher al menu delle applicazioni
+Name[fr]=Ajouter le lanceur au menu des applications
+Name[ru]=Добавить ярлык в меню приложений
+Name[hi]=ऐप लॉन्चर में लॉन्चर जोड़ें
+Name[ja]=アプリケーションランチャーに追加
+Name[zh_CN]=添加到应用程序启动器
+Icon=start-here-kde
+Exec=create-launcher --target=apps %F
