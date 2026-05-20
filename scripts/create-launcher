@@ -180,9 +180,13 @@ write_desktop() {
 EOF
 
   chmod +x "$out_path"
+  touch "$out_path"
 }
 
 refresh_app_launcher_cache() {
+  # Força sync do arquivo no disco
+  sync
+
   # Atualiza o cache de serviços do KDE
   kbuildsycoca6 --noincremental 2>/dev/null \
     || kbuildsycoca5 --noincremental 2>/dev/null \
@@ -190,6 +194,8 @@ refresh_app_launcher_cache() {
 
   # Força mudança perceptível no diretório, ajudando o watcher do Plasma
   touch "$HOME/.local/share/applications"
+
+  sleep 0.5
 }
 
 # ----------------------------
