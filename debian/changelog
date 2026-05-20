@@ -1,5 +1,9 @@
-dolphin-launcher-menu (1.0.0-1) unstable; urgency=medium
+dolphin-launcher-menu (1.0.1-2) unstable; urgency=medium
 
-  * Release
+  (v1.0.0-1)
+  * Released
 
- -- Matheus C. Salvalagio <matheus-290@hotmail.com>  Fri, 13 Feb 2026 01:42:00 -0300
+  (v1.0.1-2)
+  * Added the function to send the shortcut to the App Launcher Menu
+
+ -- Matheus C. Salvalagio <matheus-290@hotmail.com>  Tue, 20 May 2026 14:14:00 -0300
