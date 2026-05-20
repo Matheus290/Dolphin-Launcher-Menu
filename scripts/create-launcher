@@ -59,6 +59,13 @@ desktop_field_escape() {
   printf '%s' "$1" | tr -d '\r\n' | sed 's/\\/\\\\/g'
 }
 
+# Caminho do App Launcher
+get_applications_dir() {
+  local d="$HOME/.local/share/applications"
+  mkdir -p "$d"
+  printf '%s' "$d"
+}
+
 # Recebe um caminho e retorna basename seguro (sem extensão, sem chars esquisitos)
 safe_basename() {
   local path="$1"
@@ -175,6 +182,16 @@ EOF
   chmod +x "$out_path"
 }
 
+refresh_app_launcher_cache() {
+  # Atualiza o cache de serviços do KDE
+  kbuildsycoca6 --noincremental 2>/dev/null \
+    || kbuildsycoca5 --noincremental 2>/dev/null \
+    || true
+
+  # Força mudança perceptível no diretório, ajudando o watcher do Plasma
+  touch "$HOME/.local/share/applications"
+}
+
 # ----------------------------
 # Args
 # ----------------------------
@@ -196,11 +213,18 @@ case "$target" in
   here)
     # "here": para cada arquivo, cria o .desktop na pasta onde o arquivo está
     ;;
+
   desktop)
     # Desktop do usuário
     dest_dir="$(get_desktop_dir)"
     mkdir -p "$dest_dir"
     ;;
+
+  apps|applications|app-launcher)
+    # Launcher menu
+    dest_dir="$(get_applications_dir)"
+    ;;
+
   *)
     log "Invalid target: $target"
     exit 2
@@ -256,3 +280,9 @@ for input in "$@"; do
 
   log "Created: $out"
 done
+
+case "$target" in
+  apps|applications|app-launcher)
+    refresh_app_launcher_cache
+    ;;
+esac
