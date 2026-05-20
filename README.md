@@ -28,33 +28,15 @@ Compatible with **KDE Plasma 5 and 6**.
 
 ### Create launcher from a .txt file (local folder)
 
-<video src="assets/launcher-video-1.mp4"
-       autoplay
-       loop
-       muted
-       playsinline
-       width="100%">
-</video>
+https://github.com/user-attachments/assets/8cbabda6-41a0-4386-8607-dab485c4d814
 
 ### Create launcher on Desktop + customize icon
 
-<video src="assets/launcher-video-2.mp4"
-       autoplay
-       loop
-       muted
-       playsinline
-       width="100%">
-</video>
+https://github.com/user-attachments/assets/230f35c1-2e08-4b63-b723-eeba7456d968
 
 ### Create launcher on App Launcher Menu + customize
 
-<video src="assets/launcher-video-3.mp4"
-       autoplay
-       loop
-       muted
-       playsinline
-       width="100%">
-</video>
+https://github.com/user-attachments/assets/0a3e46f9-7fd5-4099-b9f5-1959a79658cf
 
 ---
 
