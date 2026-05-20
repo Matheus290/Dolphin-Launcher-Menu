@@ -1,13 +1,14 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![KDE](https://img.shields.io/badge/KDE-Plasma%205%20%7C%206-blue) ![Release](https://img.shields.io/github/v/release/Matheus290/Dolphin-Launcher-Menu) ![Stars](https://img.shields.io/github/stars/Matheus290/Dolphin-Launcher-Menu)
 
-# Dolphin Launcher Menu
+# Dolphin Create Launcher
 
-It's a Dolphin plugin that creates `.desktop` launchers directly from context menu.
+Create `.desktop` launchers directly from Dolphin's context menu.
 
 This service menu adds:
 
 - **Create Launcher Here**
 - **Create Launcher on Desktop**
+- **Create Launcher on App Launcher Menu**
 
 It automatically:
 
@@ -19,7 +20,7 @@ It automatically:
 - Applies correct permissions
 - Uses appropriate file icons
 
-Compatible with **KDE Plasma 5** and **KDE Plasma 6**.
+Compatible with **KDE Plasma 5 and 6**.
 
 ---
 
@@ -27,11 +28,33 @@ Compatible with **KDE Plasma 5** and **KDE Plasma 6**.
 
 ### Create launcher from a .txt file (local folder)
 
-![Create Here](assets/launcher-1.gif)
+<video src="assets/launcher-video-1.mp4"
+       autoplay
+       loop
+       muted
+       playsinline
+       width="100%">
+</video>
 
 ### Create launcher on Desktop + customize icon
 
-![Create on Desktop](assets/launcher-2.gif)
+<video src="assets/launcher-video-2.mp4"
+       autoplay
+       loop
+       muted
+       playsinline
+       width="100%">
+</video>
+
+### Create launcher on App Launcher Menu + customize
+
+<video src="assets/launcher-video-3.mp4"
+       autoplay
+       loop
+       muted
+       playsinline
+       width="100%">
+</video>
 
 ---
 
@@ -42,7 +65,7 @@ Compatible with **KDE Plasma 5** and **KDE Plasma 6**.
 Download the latest `.deb` from Releases and install:
 
 ```bash
-sudo dpkg -i dolphin-launcher-menu_*.deb
+sudo dpkg -i dolphin-create-launcher_*.deb
 ```
 
 ### Option 2 - Manual install (user only)
